@@ -2,542 +2,840 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>k-skill 런처</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>k-skill 앱</title>
 <style>
-:root {
-  --p: #6B4FBB; --p2: #8B6FDB; --p3: #f0ecff;
-  --bg: #f4f3fb; --card: #fff;
-  --txt: #1a1730; --txt2: #6b6880; --txt3: #9895a8;
-  --bdr: #e6e3f5; --shadow: 0 2px 12px rgba(107,79,187,.1);
-  --ok: #16a34a; --warn: #d97706; --err: #dc2626;
-  --ok-bg: #dcfce7; --warn-bg: #fef9c3; --err-bg: #fee2e2;
-  --radius: 12px;
-}
-*{box-sizing:border-box;margin:0;padding:0}
-body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans KR',sans-serif;
-  background:var(--bg);color:var(--txt);min-height:100vh}
-
-/* ── Header ── */
-header{background:linear-gradient(135deg,#4b2f9b,#6b4fbb 50%,#8b6fdb);
-  color:#fff;padding:28px 32px 22px;position:sticky;top:0;z-index:100;
-  box-shadow:0 4px 20px rgba(75,47,155,.3)}
-.header-inner{max-width:1400px;margin:0 auto;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
-.logo{font-size:1.6rem;font-weight:800;letter-spacing:-0.5px;white-space:nowrap}
-.logo span{opacity:.7;font-weight:400;font-size:1rem;margin-left:8px}
-.search-wrap{flex:1;min-width:200px;position:relative}
-.search-wrap input{width:100%;padding:10px 16px 10px 40px;border:none;border-radius:10px;
-  font-size:.95rem;background:rgba(255,255,255,.18);color:#fff;outline:none;
-  backdrop-filter:blur(4px);transition:background .2s}
-.search-wrap input::placeholder{color:rgba(255,255,255,.6)}
-.search-wrap input:focus{background:rgba(255,255,255,.28)}
-.search-icon{position:absolute;left:12px;top:50%;transform:translateY(-50%);opacity:.7;pointer-events:none}
-.header-stats{font-size:.85rem;opacity:.75;white-space:nowrap}
-
-/* ── Category tabs ── */
-.cat-bar{background:#fff;border-bottom:1px solid var(--bdr);
-  position:sticky;top:85px;z-index:90;overflow-x:auto}
-.cat-bar::-webkit-scrollbar{height:3px}
-.cat-bar::-webkit-scrollbar-thumb{background:var(--p);border-radius:2px}
-.cats{max-width:1400px;margin:0 auto;display:flex;gap:0;padding:0 24px}
-.cat-btn{padding:12px 16px;border:none;background:none;cursor:pointer;font-size:.88rem;
-  font-weight:500;color:var(--txt2);white-space:nowrap;border-bottom:3px solid transparent;
-  transition:all .2s;display:flex;align-items:center;gap:5px}
-.cat-btn:hover{color:var(--p);background:var(--p3)}
-.cat-btn.active{color:var(--p);border-bottom-color:var(--p);font-weight:700}
-.cat-count{background:var(--p3);color:var(--p);border-radius:20px;padding:1px 7px;
-  font-size:.75rem;font-weight:700}
-.cat-btn.active .cat-count{background:var(--p);color:#fff}
-
-/* ── Main grid ── */
-main{max-width:1400px;margin:0 auto;padding:24px}
-.section-header{display:flex;align-items:center;gap:10px;margin-bottom:16px;margin-top:8px}
-.section-header h2{font-size:1.05rem;font-weight:700;color:var(--txt)}
-.section-header .line{flex:1;height:1px;background:var(--bdr)}
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px;margin-bottom:32px}
-.no-results{text-align:center;padding:60px 20px;color:var(--txt3);font-size:1.1rem}
-
-/* ── Card ── */
-.card{background:var(--card);border-radius:var(--radius);border:1px solid var(--bdr);
-  box-shadow:var(--shadow);padding:16px 18px;display:flex;flex-direction:column;gap:10px;
-  transition:transform .15s,box-shadow .15s;cursor:default;
-  border-left:4px solid var(--cat-color,#ccc)}
-.card:hover{transform:translateY(-2px);box-shadow:0 6px 24px rgba(107,79,187,.15)}
-.card-top{display:flex;align-items:flex-start;gap:10px}
-.card-icon{font-size:1.5rem;line-height:1;flex-shrink:0;margin-top:1px}
-.card-title-wrap{flex:1;min-width:0}
-.card-title{font-size:1rem;font-weight:700;color:var(--txt);line-height:1.3}
-.card-id{font-size:.72rem;font-family:'Courier New',monospace;color:var(--p2);
-  background:var(--p3);padding:1px 6px;border-radius:4px;display:inline-block;margin-top:3px}
-.card-desc{font-size:.83rem;color:var(--txt2);line-height:1.55;flex:1}
-.card-footer{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:4px}
-.badge{font-size:.72rem;font-weight:600;padding:3px 9px;border-radius:20px;white-space:nowrap}
-.badge-ok{color:var(--ok);background:var(--ok-bg)}
-.badge-warn{color:var(--warn);background:var(--warn-bg)}
-.badge-err{color:var(--err);background:var(--err-bg)}
-.copy-btn{padding:7px 14px;background:var(--p);color:#fff;border:none;border-radius:8px;
-  font-size:.8rem;font-weight:600;cursor:pointer;transition:all .2s;white-space:nowrap;flex-shrink:0}
-.copy-btn:hover{background:var(--p2);transform:scale(1.05)}
-.copy-btn:active{transform:scale(.97)}
-.copy-btn.copied{background:var(--ok)}
-
-/* ── Toast ── */
-#toast{position:fixed;bottom:28px;right:28px;background:#1a1730;color:#fff;
-  padding:12px 20px;border-radius:10px;font-size:.88rem;font-weight:600;
-  box-shadow:0 8px 32px rgba(0,0,0,.25);transform:translateY(80px);opacity:0;
-  transition:all .3s cubic-bezier(.34,1.56,.64,1);z-index:999;pointer-events:none}
-#toast.show{transform:translateY(0);opacity:1}
-
-/* ── Footer ── */
-footer{text-align:center;padding:32px;color:var(--txt3);font-size:.8rem;
-  border-top:1px solid var(--bdr)}
-footer a{color:var(--p);text-decoration:none}
-footer a:hover{text-decoration:underline}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f4f3fb;color:#222;min-height:100vh;padding-bottom:64px}
+:root{--p:#6B4FBB;--p2:#8B6FDB;--p3:#f0ecff;--card:#fff;--shadow:0 2px 8px rgba(0,0,0,.08)}
+h2{font-size:1.1rem;font-weight:700;margin-bottom:12px;color:var(--p)}
+.section{background:var(--card);border-radius:16px;padding:16px;margin:12px;box-shadow:var(--shadow)}
+input,select{width:100%;padding:10px 12px;border:1.5px solid #ddd;border-radius:10px;font-size:1rem;outline:none;background:#fafafa;transition:border .2s}
+input:focus,select:focus{border-color:var(--p);background:#fff}
+button.btn{display:block;width:100%;padding:11px;background:var(--p);color:#fff;border:none;border-radius:10px;font-size:1rem;font-weight:600;cursor:pointer;margin-top:8px;transition:background .15s}
+button.btn:active{background:var(--p2)}
+button.btn.sec{background:#fff;color:var(--p);border:1.5px solid var(--p)}
+.result{margin-top:10px;background:#f7f7ff;border-radius:10px;padding:10px 12px;font-size:.93rem;line-height:1.6;word-break:break-all;min-height:36px}
+.badge{display:inline-block;font-size:.7rem;padding:2px 7px;border-radius:20px;font-weight:600;margin-left:6px;vertical-align:middle}
+.badge.ok{background:#e6f9ee;color:#1a7a40}
+.badge.err{background:#fde8e8;color:#b91c1c}
+.badge.chk{background:#fff3cd;color:#856404}
+label{font-size:.88rem;color:#555;display:block;margin-bottom:4px;margin-top:10px}
+label:first-child{margin-top:0}
+.row{display:flex;gap:8px}
+.row input{flex:1}
+.row button{flex-shrink:0;width:auto;padding:10px 14px}
+.nav{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid #e5e5ea;display:flex;z-index:100;box-shadow:0 -2px 8px rgba(0,0,0,.06)}
+.nav-btn{flex:1;padding:10px 0 6px;border:none;background:none;cursor:pointer;font-size:.68rem;color:#888;display:flex;flex-direction:column;align-items:center;gap:2px;transition:color .15s}
+.nav-btn svg{width:22px;height:22px;fill:currentColor}
+.nav-btn.active{color:var(--p)}
+.tab{display:none}.tab.active{display:block}
+.top-bar{background:var(--p);color:#fff;padding:14px 16px 10px;font-size:1.15rem;font-weight:700;position:sticky;top:0;z-index:50}
+.proxy-warn{background:#fff3cd;color:#856404;padding:8px 14px;font-size:.82rem;margin:8px 12px;border-radius:8px;display:none}
+.meal-item{padding:6px 0;border-bottom:1px solid #f0f0f0;font-size:.9rem}
+.meal-item:last-child{border-bottom:none}
+.meal-day{font-weight:700;color:var(--p);margin-top:10px;margin-bottom:4px;font-size:.95rem}
+.lotto-balls{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.ball{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.8rem;font-weight:700;color:#fff}
+.b1{background:#f0a500}.b2{background:#69c8f2}.b3{background:#ff7272}.b4{background:#aaa}.b5{background:#b0d840}.bonus{background:#ff69b4}
+.stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}
+.stat-item{background:#f0ecff;border-radius:8px;padding:8px 10px;text-align:center}
+.stat-val{font-size:1.3rem;font-weight:700;color:var(--p)}
+.stat-lbl{font-size:.72rem;color:#666;margin-top:2px}
+.skill-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:12px}
+.skill-btn{background:var(--card);border:1.5px solid #e0d9f7;border-radius:12px;padding:14px 10px;cursor:pointer;text-align:center;font-size:.82rem;font-weight:600;color:var(--p);box-shadow:var(--shadow)}
+.skill-btn:active{background:var(--p3)}
+.skill-icon{font-size:1.4rem;display:block;margin-bottom:4px}
+textarea{width:100%;padding:10px 12px;border:1.5px solid #ddd;border-radius:10px;font-size:.93rem;outline:none;resize:vertical;font-family:inherit;background:#fafafa}
+textarea:focus{border-color:var(--p);background:#fff}
+.week-tabs{display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap}
+.week-tab{padding:6px 12px;border-radius:20px;border:1.5px solid #ddd;font-size:.82rem;cursor:pointer;background:#fff}
+.week-tab.active{background:var(--p);color:#fff;border-color:var(--p)}
+.copy-toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:#333;color:#fff;padding:8px 18px;border-radius:20px;font-size:.85rem;z-index:200;pointer-events:none;opacity:0;transition:opacity .3s}
+.copy-toast.show{opacity:1}
+details{margin-top:6px}
+details summary{cursor:pointer;font-size:.82rem;color:var(--p);padding:4px 0}
+pre{font-size:.75rem;overflow-x:auto;background:#f0f0f0;padding:8px;border-radius:6px;margin-top:4px;white-space:pre-wrap;word-break:break-all}
+.loader{display:inline-block;width:16px;height:16px;border:2px solid #ddd;border-top-color:var(--p);border-radius:50%;animation:spin .7s linear infinite;margin-right:6px;vertical-align:middle}
+@keyframes spin{to{transform:rotate(360deg)}}
+.food-item{padding:4px 0;font-size:.88rem;border-bottom:1px solid #f0f0f0}
+.food-item:last-child{border-bottom:none}
 </style>
 </head>
 <body>
 
-<header>
-  <div class="header-inner">
-    <div class="logo">k-skill 런처 <span>· NomaDamas/k-skill</span></div>
-    <div class="search-wrap">
-      <span class="search-icon">🔍</span>
-      <input type="text" id="search" placeholder="스킬 이름이나 기능으로 검색..." autocomplete="off">
-    </div>
-    <div class="header-stats" id="stats"></div>
-  </div>
-</header>
+<div class="top-bar">k-skill 앱 <span id="proxy-badge" class="badge chk">서버 확인중</span></div>
+<div class="proxy-warn" id="proxy-warn">k-skill 프록시 서버가 일시적으로 응답하지 않습니다. 일부 기능이 제한됩니다.</div>
+<div class="copy-toast" id="toast">복사됨</div>
 
-<nav class="cat-bar">
-  <div class="cats" id="cats"></div>
+<!-- TAB 1: 홈 -->
+<div class="tab active" id="tab-home">
+
+  <!-- 학교 급식 -->
+  <div class="section">
+    <h2>🍱 학교 급식</h2>
+    <label>시도교육청</label>
+    <select id="meal-office">
+      <option value="서울특별시교육청">서울특별시교육청</option>
+      <option value="경기도교육청" selected>경기도교육청</option>
+      <option value="인천광역시교육청">인천광역시교육청</option>
+      <option value="부산광역시교육청">부산광역시교육청</option>
+      <option value="대구광역시교육청">대구광역시교육청</option>
+      <option value="광주광역시교육청">광주광역시교육청</option>
+      <option value="대전광역시교육청">대전광역시교육청</option>
+      <option value="울산광역시교육청">울산광역시교육청</option>
+      <option value="세종특별자치시교육청">세종특별자치시교육청</option>
+      <option value="강원도교육청">강원도교육청</option>
+      <option value="충청북도교육청">충청북도교육청</option>
+      <option value="충청남도교육청">충청남도교육청</option>
+      <option value="전라북도교육청">전라북도교육청</option>
+      <option value="전라남도교육청">전라남도교육청</option>
+      <option value="경상북도교육청">경상북도교육청</option>
+      <option value="경상남도교육청">경상남도교육청</option>
+      <option value="제주특별자치도교육청">제주특별자치도교육청</option>
+    </select>
+    <label>학교명</label>
+    <div class="row">
+      <input id="meal-school" placeholder="예: 능길초등학교" value="능길초등학교">
+      <button class="btn" style="width:auto;padding:10px 14px;margin:0" onclick="searchSchool()">검색</button>
+    </div>
+    <div id="school-result" style="display:none;margin-top:8px">
+      <label>학교 선택</label>
+      <select id="school-select" onchange="onSchoolSelect()"></select>
+    </div>
+    <label>조회 기간</label>
+    <div class="week-tabs" id="week-tabs"></div>
+    <div class="result" id="meal-result">학교를 검색한 뒤 급식을 조회합니다.</div>
+  </div>
+
+  <!-- 로또 -->
+  <div class="section">
+    <h2>🎰 로또 당첨번호</h2>
+    <label>회차 (비워두면 최신회차)</label>
+    <div class="row">
+      <input id="lotto-no" type="number" placeholder="예: 1123" style="flex:1">
+      <button class="btn" style="width:auto;padding:10px 14px;margin:0" onclick="getLotto()">조회</button>
+    </div>
+    <div class="result" id="lotto-result">버튼을 눌러 당첨번호를 조회합니다.</div>
+  </div>
+
+  <!-- 글자수 -->
+  <div class="section">
+    <h2>📝 글자수 세기</h2>
+    <textarea id="char-text" rows="4" placeholder="텍스트를 입력하세요..." oninput="countChars()"></textarea>
+    <div class="stat-grid" id="char-stats">
+      <div class="stat-item"><div class="stat-val" id="c-all">0</div><div class="stat-lbl">전체 글자수</div></div>
+      <div class="stat-item"><div class="stat-val" id="c-nospace">0</div><div class="stat-lbl">공백 제외</div></div>
+      <div class="stat-item"><div class="stat-val" id="c-word">0</div><div class="stat-lbl">단어수</div></div>
+      <div class="stat-item"><div class="stat-val" id="c-line">1</div><div class="stat-lbl">줄수</div></div>
+    </div>
+  </div>
+
+  <!-- 우편번호 -->
+  <div class="section">
+    <h2>📮 우편번호 검색</h2>
+    <button class="btn" onclick="openPostcode()">주소 검색</button>
+    <div class="result" id="postcode-result" style="display:none"></div>
+  </div>
+
+</div>
+
+<!-- TAB 2: 교통·날씨 -->
+<div class="tab" id="tab-transport">
+
+  <!-- 지하철 -->
+  <div class="section">
+    <h2>🚇 서울 지하철 도착정보</h2>
+    <label>역명</label>
+    <div class="row">
+      <input id="subway-station" placeholder="예: 강남" value="강남">
+      <button class="btn" style="width:auto;padding:10px 14px;margin:0" onclick="getSubway()">조회</button>
+    </div>
+    <div class="result" id="subway-result">역명을 입력하고 조회합니다.</div>
+  </div>
+
+  <!-- 날씨 -->
+  <div class="section">
+    <h2>🌤 한국 날씨</h2>
+    <label>지역명</label>
+    <div class="row">
+      <input id="weather-loc" placeholder="예: 서울, 부산" value="서울">
+      <button class="btn" style="width:auto;padding:10px 14px;margin:0" onclick="getWeather()">조회</button>
+    </div>
+    <div class="result" id="weather-result">지역을 입력하고 조회합니다.</div>
+  </div>
+
+  <!-- 미세먼지 -->
+  <div class="section">
+    <h2>😷 미세먼지</h2>
+    <label>지역명 (비워두면 현재 위치)</label>
+    <div class="row">
+      <input id="dust-region" placeholder="예: 서울, 강남구">
+      <button class="btn" style="width:auto;padding:10px 14px;margin:0" onclick="getDust()">조회</button>
+    </div>
+    <div class="result" id="dust-result">조회 버튼을 누릅니다.</div>
+  </div>
+
+  <!-- 한강 수위 -->
+  <div class="section">
+    <h2>🌊 한강 수위</h2>
+    <label>관측소명</label>
+    <div class="row">
+      <input id="river-station" placeholder="예: 한강대교, 잠수교" value="한강대교">
+      <button class="btn" style="width:auto;padding:10px 14px;margin:0" onclick="getRiver()">조회</button>
+    </div>
+    <div class="result" id="river-result">관측소명을 입력하고 조회합니다.</div>
+  </div>
+
+  <!-- 주유소 -->
+  <div class="section">
+    <h2>⛽ 근처 싼 주유소</h2>
+    <label>유종</label>
+    <select id="gas-type">
+      <option value="B027">휘발유</option>
+      <option value="D047">경유</option>
+      <option value="K015">LPG</option>
+    </select>
+    <button class="btn" onclick="getGas()">현재 위치로 조회</button>
+    <div class="result" id="gas-result">위치 권한을 허용하면 조회합니다.</div>
+  </div>
+
+</div>
+
+<!-- TAB 3: 경제·생활 -->
+<div class="tab" id="tab-econ">
+
+  <!-- 주식 -->
+  <div class="section">
+    <h2>📈 한국 주식 정보</h2>
+    <label>종목명 또는 코드</label>
+    <div class="row">
+      <input id="stock-q" placeholder="예: 삼성전자, 005930">
+      <button class="btn" style="width:auto;padding:10px 14px;margin:0" onclick="getStock()">조회</button>
+    </div>
+    <div class="result" id="stock-result">종목명을 입력하고 조회합니다.</div>
+  </div>
+
+  <!-- 부동산 -->
+  <div class="section">
+    <h2>🏠 부동산 실거래가</h2>
+    <label>지역명</label>
+    <div class="row">
+      <input id="estate-region" placeholder="예: 강남구, 마포구">
+      <button class="btn" style="width:auto;padding:10px 14px;margin:0" onclick="getEstate()">조회</button>
+    </div>
+    <div class="result" id="estate-result">지역명을 입력하고 조회합니다.</div>
+  </div>
+
+  <!-- 의약품 -->
+  <div class="section">
+    <h2>💊 의약품 안전 정보</h2>
+    <label>약품명</label>
+    <div class="row">
+      <input id="drug-name" placeholder="예: 타이레놀, 아스피린">
+      <button class="btn" style="width:auto;padding:10px 14px;margin:0" onclick="getDrug()">조회</button>
+    </div>
+    <div class="result" id="drug-result">약품명을 입력하고 조회합니다.</div>
+  </div>
+
+  <!-- 도서관 -->
+  <div class="section">
+    <h2>📚 도서관 도서 검색</h2>
+    <label>도서명 또는 저자</label>
+    <div class="row">
+      <input id="book-keyword" placeholder="예: 채식주의자, 한강">
+      <button class="btn" style="width:auto;padding:10px 14px;margin:0" onclick="getBook()">검색</button>
+    </div>
+    <div class="result" id="book-result">검색어를 입력하고 조회합니다.</div>
+  </div>
+
+  <!-- 쓰레기 배출 -->
+  <div class="section">
+    <h2>🗑 생활쓰레기 배출정보</h2>
+    <label>시군구명</label>
+    <div class="row">
+      <input id="waste-sigungu" placeholder="예: 강남구, 수원시">
+      <button class="btn" style="width:auto;padding:10px 14px;margin:0" onclick="getWaste()">조회</button>
+    </div>
+    <div class="result" id="waste-result">시군구명을 입력하고 조회합니다.</div>
+  </div>
+
+  <!-- 사업자등록 -->
+  <div class="section">
+    <h2>🏢 사업자등록 상태 조회</h2>
+    <label>사업자등록번호 (하이픈 제외)</label>
+    <div class="row">
+      <input id="biz-no" placeholder="예: 1234567890" maxlength="10" type="tel">
+      <button class="btn" style="width:auto;padding:10px 14px;margin:0" onclick="getBiz()">조회</button>
+    </div>
+    <div class="result" id="biz-result">사업자번호를 입력하고 조회합니다.</div>
+  </div>
+
+</div>
+
+<!-- TAB 4: Claude 스킬 -->
+<div class="tab" id="tab-skills">
+  <div style="padding:12px 12px 0;color:#888;font-size:.82rem">Claude Code에서 사용할 프롬프트를 복사합니다.</div>
+  <div class="skill-grid" id="skill-grid"></div>
+</div>
+
+<!-- 하단 네비게이션 -->
+<nav class="nav">
+  <button class="nav-btn active" onclick="showTab('home',this)" id="nav-home">
+    <svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>홈
+  </button>
+  <button class="nav-btn" onclick="showTab('transport',this)" id="nav-transport">
+    <svg viewBox="0 0 24 24"><path d="M12 2C8 2 4 5 4 9v9l2 2h12l2-2V9c0-4-4-7-8-7zm0 2c2.8 0 6 2.1 6 5v8H6V9c0-2.9 3.2-5 6-5zm-2 3v2h4V7h-4zm-2 4v2h2v-2H8zm8 0v2h-2v-2h2zM9 17h6v1H9v-1z"/></svg>교통·날씨
+  </button>
+  <button class="nav-btn" onclick="showTab('econ',this)" id="nav-econ">
+    <svg viewBox="0 0 24 24"><path d="M11.8 10.9c-2.27-.59-3-1.2-3-2.15 0-1.09 1.01-1.85 2.7-1.85 1.78 0 2.44.85 2.5 2.1h2.21c-.07-1.72-1.12-3.3-3.21-3.81V3h-3v2.16C9.39 5.57 7.5 6.83 7.5 9.09c0 2.31 1.91 3.46 4.7 4.13 2.5.6 3 1.48 3 2.41 0 .69-.49 1.79-2.7 1.79-2.06 0-2.87-.92-2.98-2.1h-2.2c.12 2.19 1.76 3.42 3.68 3.83V21h3v-2.15c1.95-.37 3.5-1.5 3.5-3.55 0-2.84-2.43-3.81-4.7-4.4z"/></svg>경제·생활
+  </button>
+  <button class="nav-btn" onclick="showTab('skills',this)" id="nav-skills">
+    <svg viewBox="0 0 24 24"><path d="M9.4 16.6L4.8 12l4.6-4.6L8 6l-6 6 6 6 1.4-1.4zm5.2 0l4.6-4.6-4.6-4.6L16 6l6 6-6 6-1.4-1.4z"/></svg>스킬
+  </button>
 </nav>
 
-<main id="main"></main>
-
-<div id="toast"></div>
-
-<footer>
-  <p>설치 경로: <code>%USERPROFILE%\.agents\skills\</code> &nbsp;·&nbsp;
-     시크릿 파일: <code>%USERPROFILE%\.config\k-skill\secrets.env</code> &nbsp;·&nbsp;
-     <a href="https://github.com/NomaDamas/k-skill" target="_blank">GitHub ↗</a></p>
-</footer>
-
 <script>
-const CATS = [
-  {id:'all',    name:'전체',       icon:'🏠'},
-  {id:'transport', name:'교통·예매',  icon:'🚂', color:'#6366f1'},
-  {id:'weather',   name:'날씨·환경',  icon:'🌤', color:'#0ea5e9'},
-  {id:'seoul',     name:'서울 실시간',icon:'🏙', color:'#8b5cf6'},
-  {id:'shopping',  name:'쇼핑·가격', icon:'🛒', color:'#f97316'},
-  {id:'realestate',name:'부동산',    icon:'🏠', color:'#84cc16'},
-  {id:'finance',   name:'금융·증권', icon:'💰', color:'#eab308'},
-  {id:'legal',     name:'법률·행정', icon:'⚖️', color:'#64748b'},
-  {id:'daily',     name:'생활정보',  icon:'🍚', color:'#ec4899'},
-  {id:'sports',    name:'스포츠·엔터',icon:'⚽', color:'#10b981'},
-  {id:'daangn',    name:'당근·중고', icon:'🛍', color:'#ff6f00'},
-  {id:'docs',      name:'문서·한국어',icon:'📄', color:'#6b7280'},
-  {id:'search',    name:'검색·미디어',icon:'🔍', color:'#06b6d4'},
-  {id:'location',  name:'위치·편의', icon:'📍', color:'#f43f5e'},
-  {id:'util',      name:'유틸리티',  icon:'🛠', color:'#a855f7'},
-];
+const PROXY = 'https://k-skill-proxy.nomadamas.org';
+const CORS = 'https://corsproxy.io/?';
+let proxyOk = null;
 
-// login: 'none' = 🟢 불필요, 'opt' = 🟡 선택, 'req' = 🔴 필요
-const SKILLS = [
-  // ── 교통·예매 ──
-  {id:'srt-booking',         cat:'transport', name:'SRT 예매',          login:'req',
-   desc:'SRT 열차 조회, 예약, 예약 확인, 취소',
-   prompt:'SRT 예매 스킬을 사용해서 [출발지]→[도착지] [날짜] 열차를 조회하고 예약해줘.'},
-  {id:'ktx-booking',         cat:'transport', name:'KTX 예매',          login:'req',
-   desc:'KTX/Korail 열차 조회, 예약, 예약 확인, 취소',
-   prompt:'KTX 예매 스킬을 사용해서 [출발지]→[도착지] [날짜] 열차를 조회해줘.'},
-  {id:'express-bus-booking', cat:'transport', name:'고속버스 예매',      login:'none',
-   desc:'KOBUS 고속버스 배차·좌석·요금 조회 및 결제 직전 handoff',
-   prompt:'고속버스 예매 스킬로 [출발지]→[도착지] [날짜] 고속버스를 조회해줘.'},
-  {id:'intercity-bus-booking',cat:'transport',name:'시외버스 예매',      login:'none',
-   desc:'티머니 시외버스 배차·좌석·요금 조회 및 결제 직전 handoff',
-   prompt:'시외버스 예매 스킬로 [출발지]→[도착지] [날짜] 시외버스를 조회해줘.'},
-  {id:'foresttrip-vacancy',  cat:'transport', name:'자연휴양림 빈 객실', login:'req',
-   desc:'숲나들e 자연휴양림 예약 가능 객실 조회 자동화',
-   prompt:'자연휴양림 스킬로 [지역/휴양림명] [체크인날짜] [박 수] 빈 객실을 조회해줘.'},
-  {id:'flight-ticket-search',cat:'transport', name:'항공권 검색',        login:'none',
-   desc:'항공권 검색 및 가격 비교',
-   prompt:'항공권 검색 스킬로 [출발지]→[도착지] [날짜] 항공권을 검색해줘.'},
-  {id:'myrealtrip-search',   cat:'transport', name:'마이리얼트립 검색',  login:'none',
-   desc:'항공권, 숙소, 투어·티켓·액티비티 검색과 상세·옵션 확인',
-   prompt:'마이리얼트립 스킬로 [여행지] 숙소/투어를 검색해줘.'},
-  {id:'hipass-receipt',      cat:'transport', name:'하이패스 영수증',    login:'req',
-   desc:'하이패스 사용내역 조회 및 영수증 출력 payload 준비',
-   prompt:'하이패스 영수증 스킬로 [기간] 사용내역을 조회하고 영수증을 만들어줘.'},
-  {id:'catchtable-sniper',   cat:'transport', name:'캐치테이블 스나이핑',login:'req',
-   desc:'로그인된 캐치테이블 Chrome 세션으로 빈자리 감시·자동 예약',
-   prompt:'캐치테이블 스나이핑 스킬로 [식당명] 빈자리를 감시해줘.'},
-
-  // ── 날씨·환경 ──
-  {id:'korea-weather',       cat:'weather',   name:'한국 날씨',          login:'none',
-   desc:'기상청 단기예보 기반 한국 날씨 조회',
-   prompt:'한국 날씨 스킬로 [지역] 오늘/내일 날씨를 알려줘.'},
-  {id:'fine-dust-location',  cat:'weather',   name:'미세먼지 조회',      login:'none',
-   desc:'현재 위치 또는 지역 기준 PM10/PM2.5 미세먼지 조회',
-   prompt:'미세먼지 스킬로 [지역] 현재 미세먼지 상태를 알려줘.'},
-  {id:'han-river-water-level',cat:'weather',  name:'한강 수위',          login:'none',
-   desc:'한강 관측소 기준 현재 수위·유량·기준수위 확인',
-   prompt:'한강 수위 스킬로 현재 한강 수위와 상태를 알려줘.'},
-
-  // ── 서울 실시간 ──
-  {id:'seoul-subway-arrival',cat:'seoul',     name:'서울 지하철 도착정보',login:'none',
-   desc:'서울 지하철 역 기준 실시간 도착 예정 열차 확인',
-   prompt:'서울 지하철 스킬로 [역명] 실시간 도착 정보를 알려줘.'},
-  {id:'seoul-density',       cat:'seoul',     name:'서울 실시간 혼잡도', login:'none',
-   desc:'서울 주요 121개 핫스팟 실시간 혼잡도 단계와 추정 인구 조회',
-   prompt:'서울 혼잡도 스킬로 [지역명] 현재 혼잡도를 알려줘.'},
-  {id:'korean-transit-route',cat:'seoul',     name:'한국 대중교통 길찾기',login:'opt',
-   desc:'ODsay LIVE API + Kakao geocoding 기반 출발지→도착지 경로 안내',
-   prompt:'대중교통 길찾기 스킬로 [출발지]에서 [목적지]까지 가는 방법을 알려줘.'},
-  {id:'subway-lost-property',cat:'seoul',     name:'지하철 분실물 조회', login:'none',
-   desc:'지하철 역/물품명 기준 LOST112 분실물 검색 조건 안내',
-   prompt:'지하철 분실물 스킬로 [물품명] 또는 [역명] 기준으로 분실물을 찾아줘.'},
-
-  // ── 쇼핑·가격 ──
-  {id:'coupang-product-search',cat:'shopping',name:'쿠팡 상품 검색',     login:'opt',
-   desc:'쿠팡 상품 검색, 로켓배송 필터, 가격대 검색, 베스트, 골드박스 특가',
-   prompt:'쿠팡 스킬로 [상품명] 검색해서 가격 비교해줘.'},
-  {id:'naver-shopping-search',cat:'shopping', name:'네이버 쇼핑 가격비교',login:'none',
-   desc:'네이버 검색 Open API 우선, 공개 BFF JSON fallback으로 상품 후보·현재가 비교',
-   prompt:'네이버 쇼핑 스킬로 [상품명] 가격을 비교해줘.'},
-  {id:'danawa-price-search', cat:'shopping',  name:'다나와 최저가 비교', login:'none',
-   desc:'다나와 쇼핑몰별 가격·배송비 포함 실구매가·카드할인·무이자 할부 비교',
-   prompt:'다나와 스킬로 [상품명] 최저가를 찾아줘.'},
-  {id:'market-kurly-search', cat:'shopping',  name:'마켓컬리 상품 조회', login:'none',
-   desc:'마켓컬리 상품 검색, 현재 가격, 할인 여부, 품절 여부 조회',
-   prompt:'마켓컬리 스킬로 [상품명]을 검색해줘.'},
-  {id:'olive-young-search',  cat:'shopping',  name:'올리브영 검색',      login:'none',
-   desc:'올리브영 매장·상품·재고 조회',
-   prompt:'올리브영 스킬로 [상품명] 또는 [매장명] 주변 재고를 조회해줘.'},
-  {id:'daiso-product-search',cat:'shopping',  name:'다이소 상품 조회',   login:'none',
-   desc:'다이소 매장별 상품 픽업 가능 여부 확인',
-   prompt:'다이소 스킬로 [상품명]을 [지역] 매장에서 살 수 있는지 확인해줘.'},
-  {id:'gangnamunni-clinic-search',cat:'shopping',name:'강남언니 병원 조회',login:'none',
-   desc:'강남언니 성형외과·피부과 병원 후보, 평점, 리뷰 수 조회',
-   prompt:'강남언니 스킬로 [지역] [과목] 병원을 조회해줘.'},
-  {id:'hola-poke-yeoksam',  cat:'shopping',  name:'올라포케 역삼',      login:'none',
-   desc:'올라포케 역삼점 메뉴, 매장 정보, 이벤트 참여 흐름 안내',
-   prompt:'올라포케 역삼 스킬로 오늘 메뉴를 알려줘.'},
-  {id:'ticket-availability', cat:'shopping',  name:'공연 일정·잔여석',   login:'none',
-   desc:'YES24·인터파크 공연 회차별 일정과 등급별 잔여석 수 조회 (조회만)',
-   prompt:'공연 잔여석 스킬로 [공연명] 잔여석을 조회해줘.'},
-  {id:'delivery-tracking',  cat:'shopping',  name:'택배 배송조회',      login:'none',
-   desc:'CJ대한통운·우체국 송장 번호로 배송 상태 조회',
-   prompt:'택배 배송조회 스킬로 송장번호 [번호]의 배송 상태를 알려줘.'},
-
-  // ── 부동산 ──
-  {id:'real-estate-search',  cat:'realestate',name:'한국 부동산 실거래가',login:'none',
-   desc:'아파트/오피스텔/빌라/단독주택 실거래가·전월세·지역코드 조회',
-   prompt:'부동산 실거래가 스킬로 [지역명] [아파트명] 최근 실거래가를 알려줘.'},
-  {id:'gongsijiga-search',   cat:'realestate',name:'개별공시지가 조회',  login:'none',
-   desc:'realtyprice.kr API에서 지번 단위 개별공시지가 다년도 추이 조회',
-   prompt:'공시지가 스킬로 [주소] 공시지가를 조회해줘.'},
-  {id:'lh-notice-search',    cat:'realestate',name:'LH 청약 공고문',     login:'none',
-   desc:'LH 임대/분양/신혼희망타운/토지/상가 공고를 지역·상태·키워드로 조회',
-   prompt:'LH 청약 스킬로 [지역] 최신 청약 공고를 알려줘.'},
-  {id:'court-auction-notice-search',cat:'realestate',name:'법원 경매 매각공고',login:'none',
-   desc:'대법원경매정보 부동산 매각공고 검색, 사건번호·감정가·최저매각가 조회',
-   prompt:'법원경매 스킬로 [지역] 이번 달 경매 물건을 조회해줘.'},
-  {id:'iros-registry-automation',cat:'realestate',name:'등기부등본 자동화',login:'req',
-   desc:'인터넷등기소에서 법인/부동산 등기부등본 장바구니, 수동 결제 후 열람 보조',
-   prompt:'등기부등본 스킬로 [주소 또는 법인명] 등기부등본을 조회해줘.'},
-
-  // ── 금융·증권 ──
-  {id:'korean-stock-search', cat:'finance',   name:'한국 주식 정보',     login:'none',
-   desc:'KRX 상장 종목 검색, 기본정보, 일별 시세 조회',
-   prompt:'한국 주식 스킬로 [종목명] 현재 주가와 기본 정보를 알려줘.'},
-  {id:'k-dart',              cat:'finance',   name:'금감원 DART 공시',   login:'req',
-   desc:'공시검색, 기업개황, 재무제표, 배당, 증자/감자, 감사의견 등 14개 endpoint',
-   prompt:'DART 스킬로 [기업명] 최근 공시와 재무제표를 조회해줘.'},
-  {id:'daishin-report-search',cat:'finance',  name:'대신증권 리포트',    login:'none',
-   desc:'대신증권 리포트 HTML 미러에서 최신 리포트 목록, 원문, Rating/Target 조회',
-   prompt:'대신증권 리포트 스킬로 [종목명 또는 섹터] 최신 리포트를 찾아줘.'},
-  {id:'kosis-stats',         cat:'finance',   name:'KOSIS 통계',         login:'none',
-   desc:'KOSIS(국가통계포털) Open API로 통계표 검색·메타·데이터 조회',
-   prompt:'KOSIS 통계 스킬로 [통계 주제] 관련 데이터를 조회해줘.'},
-  {id:'toss-securities',     cat:'finance',   name:'토스증권 조회',      login:'req',
-   desc:'토스증권 계좌 요약, 포트폴리오, 시세, 주문내역, 관심종목 조회',
-   prompt:'토스증권 스킬로 내 포트폴리오 현황을 알려줘.'},
-  {id:'nts-business-registration',cat:'finance',name:'사업자등록정보 확인',login:'none',
-   desc:'국세청 사업자등록번호 상태조회와 사업자등록정보 진위확인',
-   prompt:'사업자등록정보 스킬로 사업자번호 [번호]를 조회해줘.'},
-  {id:'korean-jangbu-for',   cat:'finance',   name:'한국 장부 자동화',   login:'opt',
-   desc:'카드·은행·영수증·세금계산서 입력 → 표준 거래내역·계정과목·세무사 전달 CSV 생성',
-   prompt:'장부 자동화 스킬로 이번 달 거래내역을 정리해줘.'},
-
-  // ── 법률·행정 ──
-  {id:'korean-law-search',   cat:'legal',     name:'한국 법령 검색',     login:'none',
-   desc:'한국 법령/조문/판례/유권해석 검색',
-   prompt:'한국 법령 스킬로 [검색어]에 해당하는 법령이나 조문을 찾아줘.'},
-  {id:'corporate-registration-consulting',cat:'legal',name:'법인등기 컨설팅',login:'none',
-   desc:'주식회사 발기설립 기준 정관·첨부서류·등록면허세·HWP 양식 작성 안내',
-   prompt:'법인등기 스킬로 법인 설립 절차와 필요 서류를 안내해줘.'},
-  {id:'korean-privacy-terms',cat:'legal',     name:'개인정보처리방침 생성',login:'none',
-   desc:'Next.js 프로젝트에 개인정보보호법 기반 개인정보처리방침/이용약관/쿠키 배너 생성',
-   prompt:'개인정보처리방침 스킬로 [서비스명] 개인정보처리방침을 생성해줘.'},
-  {id:'korean-patent-search',cat:'legal',     name:'한국 특허 검색',     login:'req',
-   desc:'한국 특허/실용신안 키워드 검색 및 출원번호 상세 조회 (KIPRIS Plus API)',
-   prompt:'특허 검색 스킬로 [키워드] 관련 특허를 검색해줘.'},
-  {id:'donation-place-search',cat:'legal',    name:'기부처 조회',        login:'none',
-   desc:'지역·관심 분야 기준 기부처 후보와 공식 페이지/1365 확인용 링크 안내',
-   prompt:'기부처 조회 스킬로 [관심분야] 기부처를 추천해줘.'},
-  {id:'korean-scholarship-search',cat:'legal',name:'장학금 검색',        login:'none',
-   desc:'한국장학재단·전국 대학·재단·기업 장학 공고 검색, 금액·자격·마감 정리',
-   prompt:'장학금 스킬로 [조건: 학교/전공/학년 등] 에 맞는 장학금을 찾아줘.'},
-
-  // ── 생활정보 ──
-  {id:'household-waste-info',cat:'daily',     name:'생활쓰레기 배출정보', login:'none',
-   desc:'시군구 기준 생활쓰레기·음식물·재활용 배출요일·시간·장소·관리부서 확인',
-   prompt:'생활쓰레기 스킬로 [시군구] 쓰레기 배출 방법을 알려줘.'},
-  {id:'k-schoollunch-menu',  cat:'daily',     name:'학교 급식 식단',     login:'none',
-   desc:'교육청·학교명으로 NEIS 학교 검색·급식 식단 조회',
-   prompt:'학교 급식 스킬로 [학교명] 오늘/이번 주 급식 식단을 알려줘.'},
-  {id:'library-book-search', cat:'daily',     name:'도서관 도서 조회',   login:'none',
-   desc:'도서관 정보나루 기반 도서 검색, 상세, 소장 도서관, 소장 여부 조회',
-   prompt:'도서관 스킬로 [책 제목 또는 저자] 소장 도서관을 찾아줘.'},
-  {id:'mfds-drug-safety',    cat:'daily',     name:'의약품 안전 체크',   login:'none',
-   desc:'식약처 e약은요·안전상비의약품 정보를 인터뷰-first 흐름으로 조회',
-   prompt:'의약품 안전 스킬로 [약 이름]의 성분, 주의사항, 부작용을 알려줘.'},
-  {id:'mfds-food-safety',    cat:'daily',     name:'식품 안전 체크',     login:'none',
-   desc:'식약처 부적합 식품·식품안전나라 회수 정보를 인터뷰-first 흐름으로 조회',
-   prompt:'식품 안전 스킬로 [식품명]의 안전 정보와 회수 이력을 알려줘.'},
-  {id:'lotto-results',       cat:'daily',     name:'로또 당첨 확인',     login:'none',
-   desc:'로또 최신 회차, 특정 회차, 번호 대조 확인',
-   prompt:'로또 스킬로 최신 로또 당첨 번호를 알려줘.'},
-
-  // ── 스포츠·엔터 ──
-  {id:'kbo-results',         cat:'sports',    name:'KBO 경기 결과',      login:'none',
-   desc:'날짜별 KBO 경기 일정, 결과, 팀별 필터링',
-   prompt:'KBO 스킬로 오늘/[날짜] 경기 결과와 순위를 알려줘.'},
-  {id:'kbl-results',         cat:'sports',    name:'KBL 경기 결과',      login:'none',
-   desc:'날짜별 KBL 경기 일정, 결과, 팀별 필터링, 현재 순위 확인',
-   prompt:'KBL 스킬로 오늘/[날짜] 경기 결과와 순위를 알려줘.'},
-  {id:'kleague-results',     cat:'sports',    name:'K리그 경기 결과',    login:'none',
-   desc:'날짜별 K리그1/K리그2 경기 결과, 팀별 필터링, 현재 순위 확인',
-   prompt:'K리그 스킬로 오늘/[날짜] 경기 결과와 순위를 알려줘.'},
-  {id:'lck-analytics',       cat:'sports',    name:'LCK 경기 분석',      login:'none',
-   desc:'LCK 경기 결과, 현재 순위, live turning point, 밴픽, 패치 메타, 팀 파워 레이팅',
-   prompt:'LCK 스킬로 최근 경기 결과와 현재 순위를 분석해줘.'},
-  {id:'korean-marathon-schedule',cat:'sports',name:'한국 마라톤 일정',    login:'none',
-   desc:'고러닝·대한철인3종협회에서 마라톤·철인3종 대회 일정, 장소, 신청 마감일 조회',
-   prompt:'마라톤 일정 스킬로 가까운 마라톤 대회 일정을 알려줘.'},
-
-  // ── 당근·중고 ──
-  {id:'daangn-used-goods-search',cat:'daangn',name:'당근 중고거래',       login:'none',
-   desc:'당근 중고거래 키워드·지역 기반 매물 검색과 상세 조회',
-   prompt:'당근 중고거래 스킬로 [물품명]을 [지역] 근처에서 검색해줘.'},
-  {id:'daangn-realty-search',cat:'daangn',    name:'당근부동산',          login:'none',
-   desc:'당근부동산 지역 기반 부동산 매물 검색과 상세 확인',
-   prompt:'당근부동산 스킬로 [지역] 매물을 검색해줘.'},
-  {id:'daangn-jobs-search',  cat:'daangn',    name:'당근알바',            login:'none',
-   desc:'당근알바 키워드·지역 기반 알바 공고 검색과 상세 조회',
-   prompt:'당근알바 스킬로 [지역] 근처 알바를 검색해줘.'},
-  {id:'daangn-cars-search',  cat:'daangn',    name:'당근중고차',          login:'none',
-   desc:'당근중고차 지역·가격 조건 기반 차량 검색과 상세 조회',
-   prompt:'당근중고차 스킬로 [차종] 차량을 [가격대]에 검색해줘.'},
-  {id:'bunjang-search',      cat:'daangn',    name:'번개장터 검색',       login:'none',
-   desc:'번개장터 검색, 상세조회, 선택적 찜/채팅, AI TOON export',
-   prompt:'번개장터 스킬로 [물품명]을 검색해줘.'},
-  {id:'used-car-price-search',cat:'daangn',   name:'중고차 가격 조회',    login:'none',
-   desc:'중고차 인수가/월 렌트료 비교 조회',
-   prompt:'중고차 가격 스킬로 [차종] [연식] 중고차 시세를 알려줘.'},
-
-  // ── 문서·한국어 ──
-  {id:'hwp',                 cat:'docs',      name:'HWP 문서 조회/변환',  login:'none',
-   desc:'.hwp/.hwpx → Markdown/JSON 변환, 문서 비교, 양식 필드 추출 (kordoc 기반)',
-   prompt:'HWP 스킬로 [파일경로] HWP 파일을 Markdown으로 변환해줘.'},
-  {id:'rhwp-edit',           cat:'docs',      name:'HWP 문서 편집',       login:'none',
-   desc:'.hwp 본문 텍스트 삽입/삭제, 표 생성, 셀 수정, replace-all (rhwp Rust CLI)',
-   prompt:'HWP 편집 스킬로 [파일경로] 파일에서 [내용]을 수정해줘.'},
-  {id:'rhwp-advanced',       cat:'docs',      name:'HWP 디버깅·IR',       login:'none',
-   desc:'rhwp Rust CLI로 HWP 레이아웃 진단·IR 덤프·버전 비교·썸네일 추출',
-   prompt:'HWP 디버깅 스킬로 [파일경로] HWP 파일의 레이아웃을 분석해줘.'},
-  {id:'korean-spell-check',  cat:'docs',      name:'한국어 맞춤법 검사',  login:'none',
-   desc:'한국어 텍스트 맞춤법/문법 검사 및 교정안 정리',
-   prompt:'맞춤법 스킬로 다음 텍스트를 교정해줘: "[텍스트]"'},
-  {id:'korean-character-count',cat:'docs',    name:'한국어 글자 수 세기', login:'none',
-   desc:'한국어 텍스트의 글자 수·줄 수·UTF-8/NEIS byte 수를 결정론적으로 계산',
-   prompt:'글자 수 스킬로 다음 텍스트의 글자 수를 세줘: "[텍스트]"'},
-  {id:'korean-slang-writing',cat:'docs',      name:'한국어 유행어 글쓰기',login:'none',
-   desc:'나무위키 유행어 기반 큐레이션으로 유행어 느낌의 한국어 글 작성',
-   prompt:'유행어 글쓰기 스킬로 [주제]에 대해 요즘 유행어를 섞어서 재미있게 써줘.'},
-  {id:'kakaotalk-mac',       cat:'docs',      name:'카카오톡 Mac CLI',    login:'none',
-   desc:'macOS에서 카카오톡 대화 조회, 검색, 메시지 전송 (macOS 전용)',
-   prompt:'카카오톡 스킬로 [채팅방명]의 최근 대화를 가져와줘.'},
-
-  // ── 검색·미디어 ──
-  {id:'naver-blog-research', cat:'search',    name:'네이버 블로그 리서치',login:'none',
-   desc:'네이버 블로그 검색, 원문 읽기, 이미지 다운로드, 한국어 콘텐츠 교차 검증',
-   prompt:'네이버 블로그 스킬로 [검색어] 관련 블로그 후기를 검색해줘.'},
-  {id:'naver-news-search',   cat:'search',    name:'네이버 뉴스 검색',   login:'none',
-   desc:'네이버 검색 Open API로 기사 제목·요약·발행시각·원문/네이버 링크 정리',
-   prompt:'네이버 뉴스 스킬로 [검색어] 최신 뉴스를 검색해줘.'},
-  {id:'geeknews-search',     cat:'search',    name:'긱뉴스 조회',        login:'none',
-   desc:'GeekNews 공개 RSS/Atom 피드 기반 최신 글 목록, 검색, 상세 확인',
-   prompt:'긱뉴스 스킬로 최신 IT 소식을 가져와줘.'},
-  {id:'joseon-sillok-search',cat:'search',    name:'조선왕조실록 검색',  login:'none',
-   desc:'조선왕조실록 키워드 검색과 왕별/연도별 필터, 기사 발췌 조회',
-   prompt:'조선왕조실록 스킬로 [키워드] 관련 기록을 검색해줘.'},
-
-  // ── 위치·편의 ──
-  {id:'cheap-gas-nearby',    cat:'location',  name:'근처 최저가 주유소',  login:'none',
-   desc:'현재 위치 기준 근처 최저가 주유소 조회',
-   prompt:'주유소 스킬로 [위치] 근처 가장 싼 주유소를 찾아줘.'},
-  {id:'public-restroom-nearby',cat:'location',name:'근처 공중화장실',     login:'none',
-   desc:'현재 위치 기준 근처 공중화장실/개방화장실 조회',
-   prompt:'공중화장실 스킬로 [위치] 근처 화장실을 찾아줘.'},
-  {id:'parking-lot-search',  cat:'location',  name:'근처 공영주차장',     login:'none',
-   desc:'현재 위치 기준 근처 공영주차장 위치·요금·운영시간 조회',
-   prompt:'공영주차장 스킬로 [위치] 근처 주차장을 찾아줘.'},
-  {id:'kakao-bar-nearby',    cat:'location',  name:'근처 술집 조회',      login:'none',
-   desc:'현재 위치 기준 영업 상태·메뉴·좌석·전화번호가 포함된 근처 술집 조회',
-   prompt:'근처 술집 스킬로 [위치] 근처 술집을 찾아줘.'},
-  {id:'zipcode-search',      cat:'location',  name:'우편번호 검색',       login:'none',
-   desc:'주소 키워드로 우편번호 + 공식 영문주소 조회',
-   prompt:'우편번호 스킬로 [주소]의 우편번호를 찾아줘.'},
-
-  // ── 유틸리티 ──
-  {id:'k-skill-setup',       cat:'util',      name:'k-skill 설정',        login:'none',
-   desc:'설치 후 공통 설정: credential 확보, 환경변수 확인, 업데이트 자동화 설정',
-   prompt:'k-skill-setup 스킬을 사용해서 공통 설정을 진행해줘.'},
-  {id:'k-skill-cleaner',     cat:'util',      name:'k-skill 클리너',      login:'none',
-   desc:'인터뷰와 트리거 횟수 통계를 합쳐 불필요한 k-skill 삭제 후보 추천',
-   prompt:'k-skill-cleaner 스킬로 잘 안 쓰는 스킬을 정리해줘.'},
-];
-
-// ── Build UI ──
-let activeCat = 'all';
-let query = '';
-
-const catColor = (catId) => (CATS.find(c=>c.id===catId)||{}).color || '#888';
-const loginBadge = (l) => l==='req'
-  ? '<span class="badge badge-err">🔐 로그인 필요</span>'
-  : l==='opt'
-  ? '<span class="badge badge-warn">🔑 선택적</span>'
-  : '<span class="badge badge-ok">✅ 바로 사용</span>';
-
-function filtered(){
-  const q = query.toLowerCase();
-  return SKILLS.filter(s => {
-    const matchCat = activeCat==='all' || s.cat===activeCat;
-    const matchQ = !q || s.name.includes(q) || s.id.includes(q) || s.desc.includes(q) || s.prompt.includes(q);
-    return matchCat && matchQ;
-  });
+// 탭 전환
+function showTab(id, btn) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + id).classList.add('active');
+  btn.classList.add('active');
 }
 
-function countByCat(catId){
-  return catId==='all'
-    ? SKILLS.length
-    : SKILLS.filter(s=>s.cat===catId).length;
-}
-
-function renderCats(){
-  const el = document.getElementById('cats');
-  el.innerHTML = CATS.map(c=>`
-    <button class="cat-btn ${activeCat===c.id?'active':''}" data-cat="${c.id}">
-      ${c.icon} ${c.name}
-      <span class="cat-count">${countByCat(c.id)}</span>
-    </button>`).join('');
-  el.querySelectorAll('.cat-btn').forEach(btn=>{
-    btn.addEventListener('click',()=>{ activeCat=btn.dataset.cat; render(); });
-  });
-}
-
-function renderMain(){
-  const main = document.getElementById('main');
-  const list = filtered();
-  document.getElementById('stats').textContent = `${list.length} / ${SKILLS.length}개 표시`;
-
-  if(!list.length){
-    main.innerHTML='<div class="no-results">🔍 검색 결과가 없습니다.</div>';
-    return;
+// 프록시 상태 확인
+async function checkProxy() {
+  const badge = document.getElementById('proxy-badge');
+  const warn = document.getElementById('proxy-warn');
+  try {
+    const r = await fetch(PROXY + '/health', {signal: AbortSignal.timeout(5000)});
+    if (r.ok) {
+      proxyOk = true;
+      badge.textContent = '서버 정상';
+      badge.className = 'badge ok';
+    } else { throw new Error(); }
+  } catch {
+    proxyOk = false;
+    badge.textContent = '서버 오류';
+    badge.className = 'badge err';
+    warn.style.display = 'block';
   }
+}
 
-  // group by cat (all mode groups; otherwise single section)
-  const groups = activeCat !== 'all'
-    ? [{cat: CATS.find(c=>c.id===activeCat)||{name:'',icon:'',color:'#888'}, skills: list}]
-    : CATS.filter(c=>c.id!=='all').map(c=>({
-        cat:c,
-        skills: list.filter(s=>s.cat===c.id)
-      })).filter(g=>g.skills.length);
+// 프록시 API 호출 헬퍼
+async function proxyGet(path) {
+  if (!proxyOk) throw new Error('프록시 서버에 연결할 수 없습니다.');
+  const r = await fetch(PROXY + path, {signal: AbortSignal.timeout(10000)});
+  if (!r.ok) {
+    const txt = await r.text().catch(() => '');
+    throw new Error('서버 오류 ' + r.status + (txt ? ': ' + txt.slice(0,100) : ''));
+  }
+  return r.json();
+}
 
-  main.innerHTML = groups.map(g=>`
-    <div>
-      <div class="section-header">
-        <h2>${g.cat.icon} ${g.cat.name}</h2>
-        <div class="line"></div>
-        <span style="color:var(--txt3);font-size:.8rem">${g.skills.length}개</span>
-      </div>
-      <div class="grid">
-        ${g.skills.map(s=>`
-          <div class="card" style="--cat-color:${catColor(s.cat)}" data-id="${s.id}">
-            <div class="card-top">
-              <div class="card-icon">${g.cat.icon}</div>
-              <div class="card-title-wrap">
-                <div class="card-title">${s.name}</div>
-                <code class="card-id">${s.id}</code>
-              </div>
-            </div>
-            <div class="card-desc">${s.desc}</div>
-            <div class="card-footer">
-              ${loginBadge(s.login)}
-              <button class="copy-btn" data-prompt="${s.prompt.replace(/"/g,'&quot;')}" data-name="${s.name}">
-                📋 복사
-              </button>
-            </div>
-          </div>`).join('')}
-      </div>
-    </div>`).join('');
+function setResult(id, html) {
+  document.getElementById(id).innerHTML = html;
+}
+function loading(id) {
+  document.getElementById(id).innerHTML = '<span class="loader"></span>조회 중...';
+}
 
-  main.querySelectorAll('.copy-btn').forEach(btn=>{
-    btn.addEventListener('click', ()=>{
-      const prompt = btn.getAttribute('data-prompt');
-      const name   = btn.getAttribute('data-name');
-      navigator.clipboard.writeText(prompt).then(()=>{
-        btn.textContent = '✅ 복사됨!';
-        btn.classList.add('copied');
-        setTimeout(()=>{ btn.textContent='📋 복사'; btn.classList.remove('copied'); }, 1500);
-        showToast(`"${name}" 프롬프트 복사됨`);
-      }).catch(()=>{
-        // fallback
-        const ta = document.createElement('textarea');
-        ta.value = prompt; ta.style.position='fixed'; ta.style.top='-9999px';
-        document.body.appendChild(ta); ta.select(); document.execCommand('copy');
-        document.body.removeChild(ta);
-        showToast(`"${name}" 복사됨 (fallback)`);
-      });
+// ── 학교 급식 ──────────────────────────────
+const EDU_CODE = {
+  '서울특별시교육청':'B10','부산광역시교육청':'C10','대구광역시교육청':'D10',
+  '인천광역시교육청':'E10','광주광역시교육청':'F10','대전광역시교육청':'G10',
+  '울산광역시교육청':'H10','세종특별자치시교육청':'I10','경기도교육청':'J10',
+  '강원도교육청':'K10','충청북도교육청':'M10','충청남도교육청':'N10',
+  '전라북도교육청':'P10','전라남도교육청':'Q10','경상북도교육청':'R10',
+  '경상남도교육청':'S10','제주특별자치도교육청':'T10'
+};
+let selectedSchool = null;
+
+function initWeekTabs() {
+  const ct = document.getElementById('week-tabs');
+  ct.innerHTML = '';
+  const today = new Date(new Date().toLocaleString('en',{timeZone:'Asia/Seoul'}));
+  const dow = today.getDay();
+  const monday = new Date(today);
+  monday.setDate(today.getDate() - (dow === 0 ? 6 : dow - 1));
+  for (let w = -1; w <= 1; w++) {
+    const mon = new Date(monday);
+    mon.setDate(monday.getDate() + w * 7);
+    const fri = new Date(mon); fri.setDate(mon.getDate() + 4);
+    const fmt = d => `${d.getMonth()+1}/${d.getDate()}`;
+    const label = w === -1 ? '지난주' : w === 0 ? '이번주' : '다음주';
+    const btn = document.createElement('button');
+    btn.className = 'week-tab' + (w === 0 ? ' active' : '');
+    btn.textContent = label + ' ' + fmt(mon) + '~' + fmt(fri);
+    btn.dataset.mon = toYMD(mon);
+    btn.onclick = function() {
+      document.querySelectorAll('.week-tab').forEach(b => b.classList.remove('active'));
+      this.classList.add('active');
+      if (selectedSchool) fetchWeekMeals(selectedSchool, this.dataset.mon);
+    };
+    ct.appendChild(btn);
+  }
+}
+
+function toYMD(d) {
+  return d.getFullYear() + String(d.getMonth()+1).padStart(2,'0') + String(d.getDate()).padStart(2,'0');
+}
+
+async function searchSchool() {
+  const office = document.getElementById('meal-office').value;
+  const name = document.getElementById('meal-school').value.trim();
+  if (!name) return;
+  loading('meal-result');
+  try {
+    const code = EDU_CODE[office] || 'J10';
+    const url = `https://open.neis.go.kr/hub/schoolInfo?Type=json&pIndex=1&pSize=20&ATPT_OFCDC_SC_CODE=${code}&SCHUL_NM=${encodeURIComponent(name)}`;
+    const r = await fetch(url);
+    const data = await r.json();
+    const rows = data?.schoolInfo?.[1]?.row;
+    if (!rows || rows.length === 0) {
+      setResult('meal-result', '학교를 찾을 수 없습니다. 교육청·학교명을 확인해 주세요.');
+      document.getElementById('school-result').style.display = 'none';
+      return;
+    }
+    const sel = document.getElementById('school-select');
+    sel.innerHTML = rows.map((r,i) => `<option value="${i}">${r.SCHUL_NM} (${r.ORG_RDNMA || r.ORG_ADDR || ''})</option>`).join('');
+    sel.dataset.rows = JSON.stringify(rows);
+    document.getElementById('school-result').style.display = 'block';
+    const row = rows[0];
+    selectedSchool = {atpt: row.ATPT_OFCDC_SC_CODE, sd: row.SD_SCHUL_CODE, name: row.SCHUL_NM};
+    const activeTab = document.querySelector('.week-tab.active');
+    fetchWeekMeals(selectedSchool, activeTab?.dataset.mon);
+  } catch(e) {
+    setResult('meal-result', '오류: ' + e.message);
+  }
+}
+
+function onSchoolSelect() {
+  const sel = document.getElementById('school-select');
+  const rows = JSON.parse(sel.dataset.rows || '[]');
+  const row = rows[sel.value];
+  if (!row) return;
+  selectedSchool = {atpt: row.ATPT_OFCDC_SC_CODE, sd: row.SD_SCHUL_CODE, name: row.SCHUL_NM};
+  const activeTab = document.querySelector('.week-tab.active');
+  fetchWeekMeals(selectedSchool, activeTab?.dataset.mon);
+}
+
+async function fetchWeekMeals(school, mondayYMD) {
+  loading('meal-result');
+  const meals = {};
+  const days = ['월','화','수','목','금'];
+  const promises = [];
+  for (let i = 0; i < 5; i++) {
+    const d = new Date(mondayYMD.slice(0,4)+'-'+mondayYMD.slice(4,6)+'-'+mondayYMD.slice(6,8));
+    d.setDate(d.getDate() + i);
+    const ymd = toYMD(d);
+    promises.push(
+      fetch(`https://open.neis.go.kr/hub/mealServiceDietInfo?Type=json&pIndex=1&pSize=10&ATPT_OFCDC_SC_CODE=${school.atpt}&SD_SCHUL_CODE=${school.sd}&MLSV_YMD=${ymd}`)
+        .then(r => r.json())
+        .then(data => { meals[ymd] = {day: days[i], data}; })
+        .catch(() => { meals[ymd] = {day: days[i], error: true}; })
+    );
+  }
+  await Promise.all(promises);
+  let html = `<b>${school.name}</b> 급식 식단<br>`;
+  const keys = Object.keys(meals).sort();
+  for (const ymd of keys) {
+    const {day, data, error} = meals[ymd];
+    const dateStr = ymd.slice(4,6)+'/'+ymd.slice(6,8);
+    html += `<div class="meal-day">${day} (${dateStr})</div>`;
+    if (error) { html += '<div class="meal-item" style="color:#aaa">조회 오류</div>'; continue; }
+    const rows = data?.mealServiceDietInfo?.[1]?.row;
+    if (!rows || rows.length === 0) {
+      html += '<div class="meal-item" style="color:#aaa">급식 정보 없음</div>';
+      continue;
+    }
+    for (const row of rows) {
+      const kind = row.MMEAL_SC_NM || '';
+      const menu = (row.DDISH_NM || '').replace(/<br\/>/g,'\n').replace(/\s*\d+(\.\d+)*/g,'').trim();
+      const kcal = row.CAL_INFO || '';
+      html += `<div class="meal-item"><b>${kind}</b><br><span style="white-space:pre-line;font-size:.85rem">${menu}</span>${kcal ? '<br><span style="color:#888;font-size:.78rem">'+kcal+'</span>' : ''}</div>`;
+    }
+  }
+  setResult('meal-result', html);
+}
+
+// ── 로또 ──────────────────────────────────
+async function getLotto() {
+  loading('lotto-result');
+  const no = document.getElementById('lotto-no').value.trim();
+  try {
+    let url = `https://www.dhlottery.co.kr/common.do?method=getLottoNumber&drwNo=${no || ''}`;
+    let data;
+    try {
+      const r = await fetch(url, {signal: AbortSignal.timeout(8000)});
+      data = await r.json();
+    } catch {
+      const r = await fetch(CORS + encodeURIComponent(url), {signal: AbortSignal.timeout(10000)});
+      data = await r.json();
+    }
+    if (data.returnValue !== 'success') throw new Error('데이터 없음');
+    const nums = [data.drwtNo1,data.drwtNo2,data.drwtNo3,data.drwtNo4,data.drwtNo5,data.drwtNo6];
+    const bonus = data.bnusNo;
+    function ballColor(n){ return n<=10?'b1':n<=20?'b2':n<=30?'b3':n<=40?'b4':'b5'; }
+    let balls = nums.map(n=>`<div class="ball ${ballColor(n)}">${n}</div>`).join('');
+    balls += `<div class="ball bonus">${bonus}</div>`;
+    const prize = data.firstWinamnt ? Number(data.firstWinamnt).toLocaleString() + '원' : '-';
+    const cnt = data.firstPrzwnerCo || 0;
+    setResult('lotto-result',
+      `<b>${data.drwNo}회</b> (${data.drwNoDate})<div class="lotto-balls">${balls}</div><div style="margin-top:8px;font-size:.85rem">1등 당첨금: <b>${prize}</b> / 당첨자: <b>${cnt}명</b></div>`);
+  } catch(e) {
+    setResult('lotto-result', '조회 실패: ' + e.message);
+  }
+}
+
+// ── 글자수 ────────────────────────────────
+function countChars() {
+  const txt = document.getElementById('char-text').value;
+  document.getElementById('c-all').textContent = txt.length;
+  document.getElementById('c-nospace').textContent = txt.replace(/\s/g,'').length;
+  document.getElementById('c-word').textContent = txt.trim() ? txt.trim().split(/\s+/).length : 0;
+  document.getElementById('c-line').textContent = txt ? txt.split('\n').length : 1;
+}
+
+// ── 우편번호 ──────────────────────────────
+function openPostcode() {
+  if (typeof daum === 'undefined') {
+    const s = document.createElement('script');
+    s.src = 'https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js';
+    s.onload = () => _openPostcode();
+    document.head.appendChild(s);
+  } else { _openPostcode(); }
+}
+function _openPostcode() {
+  new daum.Postcode({
+    oncomplete: function(data) {
+      const el = document.getElementById('postcode-result');
+      el.style.display = 'block';
+      el.innerHTML = `<b>${data.zonecode}</b><br>${data.address}<br><span style="color:#888;font-size:.85rem">${data.jibunAddress || ''}</span>`;
+    }
+  }).open();
+}
+
+// ── 서울 지하철 ───────────────────────────
+async function getSubway() {
+  const station = document.getElementById('subway-station').value.trim();
+  if (!station) return;
+  loading('subway-result');
+  try {
+    const data = await proxyGet(`/v1/seoul-subway/arrival?stationName=${encodeURIComponent(station)}`);
+    const rows = data?.realtimeArrivalList || data?.arrivals || [];
+    if (!rows.length) { setResult('subway-result','도착 정보가 없습니다.'); return; }
+    let html = '';
+    rows.slice(0,10).forEach(r => {
+      const line = r.subwayId || r.lineId || '';
+      const dest = r.trainLineNm || r.destinationNm || '';
+      const msg = r.arvlMsg2 || r.message || '';
+      html += `<div class="food-item"><b>${dest}</b> ${line}<br><span style="color:#555">${msg}</span></div>`;
     });
+    setResult('subway-result', html || JSON.stringify(data).slice(0,300));
+  } catch(e) {
+    setResult('subway-result', '오류: ' + e.message);
+  }
+}
+
+// ── 날씨 ──────────────────────────────────
+async function getWeather() {
+  const loc = document.getElementById('weather-loc').value.trim();
+  if (!loc) return;
+  loading('weather-result');
+  try {
+    const data = await proxyGet(`/v1/korea-weather/forecast?location=${encodeURIComponent(loc)}`);
+    const items = data?.response?.body?.items?.item || data?.items || data?.forecast || [];
+    if (!items.length) { setResult('weather-result', '<details><summary>원본 보기</summary><pre>'+JSON.stringify(data,null,2).slice(0,800)+'</pre></details>'); return; }
+    let html = `<b>${loc}</b> 날씨 예보<br>`;
+    items.slice(0,12).forEach(it => {
+      html += `<div class="food-item">${it.fcstDate||''} ${it.fcstTime||''} <b>${it.category||''}</b>: ${it.fcstValue||''}</div>`;
+    });
+    setResult('weather-result', html);
+  } catch(e) {
+    setResult('weather-result', '오류: ' + e.message);
+  }
+}
+
+// ── 미세먼지 ──────────────────────────────
+async function getDust() {
+  const region = document.getElementById('dust-region').value.trim();
+  loading('dust-result');
+  try {
+    let path = `/v1/fine-dust/report`;
+    if (region) path += `?regionHint=${encodeURIComponent(region)}`;
+    else {
+      const pos = await new Promise((res,rej) => navigator.geolocation.getCurrentPosition(res,rej,{timeout:8000}));
+      path += `?lat=${pos.coords.latitude}&lon=${pos.coords.longitude}`;
+    }
+    const data = await proxyGet(path);
+    const items = data?.response?.body?.items || data?.items || [data];
+    let html = '';
+    (Array.isArray(items)?items:[items]).slice(0,5).forEach(it => {
+      const pm10 = it.pm10Value || it.pm10 || '-';
+      const pm25 = it.pm25Value || it.pm25 || '-';
+      const grade = it.pm10Grade || it.grade || '';
+      html += `<div class="food-item"><b>${it.stationName||it.station||region||'현재위치'}</b><br>PM10: <b>${pm10}</b>㎍/㎥ | PM2.5: <b>${pm25}</b>㎍/㎥ ${grade?'| 등급: '+grade:''}</div>`;
+    });
+    setResult('dust-result', html || '<details><summary>원본</summary><pre>'+JSON.stringify(data).slice(0,500)+'</pre></details>');
+  } catch(e) {
+    setResult('dust-result', '오류: ' + e.message);
+  }
+}
+
+// ── 한강 수위 ─────────────────────────────
+async function getRiver() {
+  const station = document.getElementById('river-station').value.trim();
+  if (!station) return;
+  loading('river-result');
+  try {
+    const data = await proxyGet(`/v1/han-river/water-level?stationName=${encodeURIComponent(station)}`);
+    const items = data?.content || data?.items || [data];
+    let html = '';
+    (Array.isArray(items)?items:[items]).slice(0,5).forEach(it => {
+      html += `<div class="food-item"><b>${it.stationName||it.name||station}</b><br>수위: <b>${it.wl||it.waterLevel||'-'}</b>m | ${it.obs_time||it.time||''}</div>`;
+    });
+    setResult('river-result', html || '<details><summary>원본</summary><pre>'+JSON.stringify(data).slice(0,400)+'</pre></details>');
+  } catch(e) {
+    setResult('river-result', '오류: ' + e.message);
+  }
+}
+
+// ── 주유소 ────────────────────────────────
+async function getGas() {
+  loading('gas-result');
+  try {
+    const pos = await new Promise((res,rej) => navigator.geolocation.getCurrentPosition(res,rej,{timeout:10000}));
+    const {latitude:lat, longitude:lon} = pos.coords;
+    const prodcd = document.getElementById('gas-type').value;
+    const data = await proxyGet(`/v1/opinet/around?lat=${lat}&lon=${lon}&prodcd=${prodcd}&cnt=5`);
+    const items = data?.RESULT?.OIL || data?.items || data?.result || [];
+    if (!items.length) { setResult('gas-result','<details><summary>원본</summary><pre>'+JSON.stringify(data).slice(0,400)+'</pre></details>'); return; }
+    let html = `현재위치(${lat.toFixed(4)}, ${lon.toFixed(4)}) 주변<br>`;
+    items.slice(0,5).forEach((it,i) => {
+      const name = it.OS_NM || it.name || '-';
+      const price = it.PRICE || it.price || '-';
+      const dist = it.DISTANCE || it.distance || '';
+      html += `<div class="food-item"><b>${i+1}. ${name}</b><br>${price}원/L${dist?' | '+Math.round(dist)+'m':''}</div>`;
+    });
+    setResult('gas-result', html);
+  } catch(e) {
+    setResult('gas-result', '오류: ' + e.message);
+  }
+}
+
+// ── 주식 ──────────────────────────────────
+async function getStock() {
+  const q = document.getElementById('stock-q').value.trim();
+  if (!q) return;
+  loading('stock-result');
+  try {
+    const today = new Date(new Date().toLocaleString('en',{timeZone:'Asia/Seoul'}));
+    const basDd = toYMD(today);
+    const data = await proxyGet(`/v1/korean-stock/search?q=${encodeURIComponent(q)}&bas_dd=${basDd}`);
+    const items = data?.response?.body?.items?.item || data?.items || data?.result || [data];
+    let html = '';
+    (Array.isArray(items)?items:[items]).slice(0,5).forEach(it => {
+      const name = it.itmsNm || it.name || q;
+      const price = it.clpr || it.price || '-';
+      const diff = it.vs || it.change || '';
+      const rate = it.fltRt || it.rate || '';
+      const color = (parseFloat(diff)>0)?'#c00':(parseFloat(diff)<0)?'#00a':'#333';
+      html += `<div class="food-item"><b>${name}</b> (${it.srtnCd||it.code||''})<br>종가: <b>${Number(price).toLocaleString()}원</b> <span style="color:${color}">${diff?diff+'원 ('+rate+'%)':''}</span></div>`;
+    });
+    setResult('stock-result', html || '<details><summary>원본</summary><pre>'+JSON.stringify(data).slice(0,500)+'</pre></details>');
+  } catch(e) {
+    setResult('stock-result', '오류: ' + e.message);
+  }
+}
+
+// ── 부동산 ────────────────────────────────
+async function getEstate() {
+  const region = document.getElementById('estate-region').value.trim();
+  if (!region) return;
+  loading('estate-result');
+  try {
+    const rc = await proxyGet(`/v1/real-estate/region-code?q=${encodeURIComponent(region)}`);
+    const code = rc?.lawd_cd || rc?.code || (rc?.items?.[0]?.lawd_cd);
+    if (!code) throw new Error('지역코드를 찾을 수 없습니다: ' + JSON.stringify(rc).slice(0,100));
+    const today = new Date(new Date().toLocaleString('en',{timeZone:'Asia/Seoul'}));
+    const ym = toYMD(today).slice(0,6);
+    const data = await proxyGet(`/v1/real-estate/apartment/trade?lawd_cd=${code}&deal_ymd=${ym}`);
+    const items = data?.response?.body?.items?.item || data?.items || [];
+    if (!items.length) { setResult('estate-result','이달 거래내역이 없거나 아직 집계 전입니다.<details><summary>원본</summary><pre>'+JSON.stringify(data).slice(0,400)+'</pre></details>'); return; }
+    let html = `<b>${region}</b> ${ym.slice(0,4)}년 ${ym.slice(4,6)}월 아파트 거래<br>`;
+    items.slice(0,8).forEach(it => {
+      const name = it.aptNm || it.name || '-';
+      const price = it.dealAmount || it.price || '-';
+      const area = it.excluUseAr || it.area || '';
+      const floor = it.floor || '';
+      html += `<div class="food-item"><b>${name}</b> ${floor?floor+'층':''} ${area?Math.round(area)+'㎡':''}<br>${typeof price==='string'?price.replace(/,/g,''):price}만원</div>`;
+    });
+    setResult('estate-result', html);
+  } catch(e) {
+    setResult('estate-result', '오류: ' + e.message);
+  }
+}
+
+// ── 의약품 ────────────────────────────────
+async function getDrug() {
+  const name = document.getElementById('drug-name').value.trim();
+  if (!name) return;
+  loading('drug-result');
+  try {
+    const data = await proxyGet(`/v1/mfds/drug-safety/lookup?drugName=${encodeURIComponent(name)}`);
+    const items = data?.body?.items || data?.items || [data];
+    let html = '';
+    (Array.isArray(items)?items:[items]).slice(0,3).forEach(it => {
+      const iname = it.itemName || it.name || name;
+      const company = it.entpName || it.company || '';
+      const effect = it.efcyQesitm || it.effect || '';
+      const warn = it.atpnQesitm || it.warning || '';
+      html += `<div class="food-item"><b>${iname}</b>${company?' ('+company+')':''}<br>${effect?'<span style="font-size:.82rem;color:#333">'+effect.slice(0,120)+'...</span>':''}</div>${warn?'<div style="color:#b91c1c;font-size:.8rem;margin:2px 0">주의: '+warn.slice(0,100)+'</div>':''}`;
+    });
+    setResult('drug-result', html || '<details><summary>원본</summary><pre>'+JSON.stringify(data).slice(0,500)+'</pre></details>');
+  } catch(e) {
+    setResult('drug-result', '오류: ' + e.message);
+  }
+}
+
+// ── 도서관 도서 ───────────────────────────
+async function getBook() {
+  const kw = document.getElementById('book-keyword').value.trim();
+  if (!kw) return;
+  loading('book-result');
+  try {
+    const data = await proxyGet(`/v1/data4library/book-search?keyword=${encodeURIComponent(kw)}`);
+    const items = data?.response?.docs || data?.docs || data?.items || [];
+    if (!items.length) { setResult('book-result','검색 결과가 없습니다.<details><summary>원본</summary><pre>'+JSON.stringify(data).slice(0,300)+'</pre></details>'); return; }
+    let html = '';
+    items.slice(0,6).forEach(it => {
+      const doc = it.doc || it;
+      const title = doc.bookname || doc.title || '-';
+      const author = doc.authors || doc.author || '';
+      const pub = doc.publisher || '';
+      const year = doc.publication_year || doc.year || '';
+      html += `<div class="food-item"><b>${title}</b><br><span style="font-size:.83rem;color:#555">${author}${pub?' | '+pub:''} ${year}</span></div>`;
+    });
+    setResult('book-result', html);
+  } catch(e) {
+    setResult('book-result', '오류: ' + e.message);
+  }
+}
+
+// ── 쓰레기 배출 ───────────────────────────
+async function getWaste() {
+  const sg = document.getElementById('waste-sigungu').value.trim();
+  if (!sg) return;
+  loading('waste-result');
+  try {
+    const data = await proxyGet(`/v1/household-waste/info?sigungu=${encodeURIComponent(sg)}&pageNo=1&numOfRows=100`);
+    const items = data?.response?.body?.items?.item || data?.items || [];
+    if (!items.length) { setResult('waste-result','결과 없음.<details><summary>원본</summary><pre>'+JSON.stringify(data).slice(0,400)+'</pre></details>'); return; }
+    let html = `<b>${sg}</b> 생활쓰레기 배출정보<br>`;
+    items.slice(0,10).forEach(it => {
+      const waste = it.wasteKndNm || it.kind || it.WASTE_KND_NM || '-';
+      const method = it.dspslMthdNm || it.method || it.DSPSL_MTHD_NM || '';
+      const day = it.dspslDayNm || it.day || it.DSPSL_DAY_NM || '';
+      html += `<div class="food-item"><b>${waste}</b><br>${method} ${day}</div>`;
+    });
+    setResult('waste-result', html);
+  } catch(e) {
+    setResult('waste-result', '오류: ' + e.message);
+  }
+}
+
+// ── 사업자등록 ────────────────────────────
+async function getBiz() {
+  const no = document.getElementById('biz-no').value.replace(/[^0-9]/g,'');
+  if (no.length !== 10) { setResult('biz-result','10자리 사업자번호를 입력해 주세요.'); return; }
+  loading('biz-result');
+  try {
+    const r = await fetch(PROXY + '/v1/nts-business/status', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({b_no: [no]}),
+      signal: AbortSignal.timeout(10000)
+    });
+    if (!r.ok) throw new Error('서버 오류 ' + r.status);
+    const data = await r.json();
+    const items = data?.data || data?.response || [data];
+    let html = '';
+    (Array.isArray(items)?items:[items]).slice(0,3).forEach(it => {
+      const status = it.b_stt || it.status || '-';
+      const type = it.tax_type || it.taxType || '';
+      const end = it.end_dt || it.endDate || '';
+      html += `<div class="food-item">사업자번호: <b>${no}</b><br>상태: <b>${status}</b>${type?' | 과세유형: '+type:''} ${end?'| 폐업일: '+end:''}</div>`;
+    });
+    setResult('biz-result', html || '<details><summary>원본</summary><pre>'+JSON.stringify(data).slice(0,400)+'</pre></details>');
+  } catch(e) {
+    setResult('biz-result', '오류: ' + e.message);
+  }
+}
+
+// ── Claude 스킬 목록 ──────────────────────
+const SKILLS = [
+  {icon:'🚄',name:'SRT 예매',prompt:'SRT 예매를 도와줘. 출발역, 도착역, 날짜, 시간, 인원을 알려줘.'},
+  {icon:'🚅',name:'KTX 예매',prompt:'KTX 예매를 도와줘. 출발역, 도착역, 날짜, 시간, 인원을 알려줘.'},
+  {icon:'🌲',name:'자연휴양림',prompt:'자연휴양림 빈 객실을 조회해줘. 지역이나 기간을 알려줘.'},
+  {icon:'⚖️',name:'한국 법령',prompt:'한국 법령을 검색해줘. 찾고 싶은 법령이나 조문을 알려줘.'},
+  {icon:'🏠',name:'부동산 시세',prompt:'부동산 실거래가를 조회해줘. 지역명을 알려줘.'},
+  {icon:'🔬',name:'특허 검색',prompt:'한국 특허 정보를 검색해줘. 기술 키워드나 출원인을 알려줘.'},
+  {icon:'📊',name:'주식 조회',prompt:'한국 주식 정보를 조회해줘. 종목명이나 코드를 알려줘.'},
+  {icon:'🚇',name:'지하철',prompt:'서울 지하철 도착정보를 알려줘. 역명을 알려줘.'},
+  {icon:'🌤',name:'날씨',prompt:'한국 날씨 예보를 알려줘. 지역명을 알려줘.'},
+  {icon:'😷',name:'미세먼지',prompt:'현재 내 위치의 미세먼지 농도를 알려줘.'},
+  {icon:'🌊',name:'한강수위',prompt:'한강 수위를 알려줘. 관측소 이름을 알려줘.'},
+  {icon:'⛽',name:'주유소',prompt:'근처 가장 싼 주유소를 찾아줘. 현재 위치를 기준으로 해줘.'},
+  {icon:'🍱',name:'학교급식',prompt:'학교 급식 식단을 알려줘. 시도교육청, 학교명, 날짜를 알려줘.'},
+  {icon:'🎰',name:'로또',prompt:'최신 로또 당첨번호를 알려줘.'},
+  {icon:'💊',name:'의약품',prompt:'의약품 안전 정보를 알려줘. 약품명을 알려줘.'},
+  {icon:'🍔',name:'식품 안전',prompt:'식품 안전 정보를 조회해줘. 식품명을 알려줘.'},
+  {icon:'📚',name:'도서 검색',prompt:'도서관에서 책을 찾아줘. 도서명이나 저자를 알려줘.'},
+  {icon:'🗑',name:'쓰레기 배출',prompt:'생활쓰레기 배출 방법을 알려줘. 지역(시군구)을 알려줘.'},
+  {icon:'🏫',name:'학교 급식',prompt:'학교 급식 식단을 조회해줘.'},
+  {icon:'🏢',name:'사업자 조회',prompt:'사업자등록 상태를 조회해줘. 사업자등록번호를 알려줘.'},
+  {icon:'📈',name:'공기질',prompt:'현재 위치의 공기질(미세먼지, 초미세먼지)을 알려줘.'},
+  {icon:'🚌',name:'버스 정보',prompt:'버스 도착 정보를 알려줘. 정류소 이름이나 번호를 알려줘.'},
+  {icon:'🏦',name:'환율',prompt:'현재 환율 정보를 알려줘. 어떤 통화가 궁금해?'},
+  {icon:'📰',name:'뉴스 요약',prompt:'오늘의 주요 뉴스를 요약해줘.'},
+];
+
+function buildSkillGrid() {
+  const grid = document.getElementById('skill-grid');
+  grid.innerHTML = SKILLS.map(s =>
+    `<div class="skill-btn" onclick="copyPrompt(${JSON.stringify(s.prompt)})">
+      <span class="skill-icon">${s.icon}</span>${s.name}
+    </div>`
+  ).join('');
+}
+
+function copyPrompt(text) {
+  navigator.clipboard.writeText(text).then(() => showToast('복사됨')).catch(() => {
+    const ta = document.createElement('textarea');
+    ta.value = text; document.body.appendChild(ta); ta.select();
+    document.execCommand('copy'); document.body.removeChild(ta);
+    showToast('복사됨');
   });
 }
 
-function render(){ renderCats(); renderMain(); }
-
-function showToast(msg){
+function showToast(msg) {
   const t = document.getElementById('toast');
-  t.textContent = '✅ ' + msg;
-  t.classList.add('show');
-  setTimeout(()=>t.classList.remove('show'), 2000);
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 1800);
 }
 
-// search
-document.getElementById('search').addEventListener('input', e=>{
-  query = e.target.value;
-  if(query) activeCat='all';
-  render();
-});
-
-// keyboard shortcut /
-document.addEventListener('keydown', e=>{
-  if(e.key==='/' && document.activeElement.tagName!=='INPUT'){
-    e.preventDefault(); document.getElementById('search').focus();
-  }
-});
-
-render();
+// 초기화
+checkProxy();
+initWeekTabs();
+buildSkillGrid();
+// 기본 로또 조회
+getLotto();
 </script>
 </body>
 </html>
